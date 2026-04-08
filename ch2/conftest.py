@@ -8,12 +8,16 @@ from orm import metadata, start_mappers
 
 @pytest.fixture
 def engine():
-    engine = create_engine(
-        "sqlite:////home/diego/code/estudos/arch_pattern_w_python/ch2/test.db"
-    )
+    # engine = create_engine(
+    #     "sqlite:////home/diego/code/estudos/arch_pattern_w_python/ch2/test.db"
+    # )
+
+    engine = create_engine("sqlite:///:memory:")
     metadata.create_all(bind=engine)
 
-    return engine
+    yield engine
+
+    metadata.drop_all(bind=engine)
 
 
 @pytest.fixture

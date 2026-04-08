@@ -15,11 +15,15 @@ class Batch:
         self.reference = ref
         self.sku = sku
         self.eta = eta
-        self._purchase_quantity = qty
+        self._purchased_quantity = qty
         self._allocations = set()
 
     def allocate(self, line: OrderLine):
         if self.can_allocate(line):
+            # TODO: BUG
+            # quando uma mesma order_line chega nesta parte ela não entra no set
+            # pois já existe pois é validada pelo conjunto dos atributos da classe
+            # mas é persistida na tabela order_lines causando inconsistência
             self._allocations.add(line)
 
     def deallocate(self, line: OrderLine):
@@ -27,6 +31,7 @@ class Batch:
             self._allocations.remove(line)
 
     def can_allocate(self, line: OrderLine) -> bool:
+        breakpoint()
         return self.sku == line.sku and self.available_quantity >= line.qty
 
     @property
@@ -35,7 +40,7 @@ class Batch:
 
     @property
     def available_quantity(self) -> int:
-        return self._purchase_quantity - self.allocated_quantity
+        return self._purchased_quantity - self.allocated_quantity
 
     def __eq__(self, other):
         if not isinstance(other, Batch):

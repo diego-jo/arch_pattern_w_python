@@ -1,12 +1,13 @@
-import model
+import ch2.model as model
 from sqlalchemy import Column, Date, ForeignKey, Integer, String, Table
 from sqlalchemy.orm import registry, relationship
 
 mapper_registry = registry()
+metadata = mapper_registry.metadata
 
 order_lines = Table(
     "order_lines",
-    mapper_registry.metadata,
+    metadata,
     Column("id", Integer, primary_key=True, autoincrement=True),
     Column("sku", String(255)),
     Column("qty", Integer, nullable=False),
@@ -15,7 +16,7 @@ order_lines = Table(
 
 batches = Table(
     "batches",
-    mapper_registry.metadata,
+    metadata,
     Column("id", Integer, primary_key=True, autoincrement=True),
     Column("reference", String(255)),
     Column("sku", String(255)),
@@ -25,7 +26,7 @@ batches = Table(
 
 allocations = Table(
     "allocations",
-    mapper_registry.metadata,
+    metadata,
     Column("id", Integer, primary_key=True, autoincrement=True),
     Column("orderline_id", ForeignKey("order_lines.id")),
     Column("batch_id", ForeignKey("batches.id")),
@@ -38,6 +39,9 @@ def start_mappers():
         model.Batch,
         batches,
         properties={
+            # TODO: entender como o relacionamento entre allocations e order_lines tras
+            # automaticamente os objetos de order_line quando a propriedade
+            # _allocations é usada
             "_allocations": relationship(
                 model.OrderLine,
                 secondary=allocations,
