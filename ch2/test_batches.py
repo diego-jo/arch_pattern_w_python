@@ -1,7 +1,7 @@
 from datetime import date, timedelta
 
 import pytest
-from model import Batch, OrderLine, OutOfStock, allocate
+from .model import Batch, OrderLine, OutOfStock, allocate
 
 BIG_CHAIR_SKU = "BIG_CHAIR_001"
 BIG_TABLE_SKU = "BIG_TABLE_001"

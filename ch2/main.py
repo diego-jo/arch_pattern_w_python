@@ -1,12 +1,16 @@
-from typing import Any, Dict
+from typing import Annotated, Any, Dict
 
-from fastapi import FastAPI, Depends
-from sqlalchemy import select
+from fastapi import Depends, FastAPI
+from sqlalchemy.orm import Session
 
 from .db_config import get_session
-from .model import Batch, OrderLine, allocate
+from .model import OrderLine, allocate
+from .repository import SqlAlchemyBatchRepository
 
 app = FastAPI()
+
+
+DBSession = Annotated[Session, Depends(get_session)]
 
 
 @app.get("/health")
@@ -15,12 +19,15 @@ def health():
 
 
 @app.post("/allocate-order")
-def allocate_order(data: Dict[Any, Any], session=Depends(get_session)):
+def allocate_order(data: Dict[Any, Any], session: DBSession):
+    repository = SqlAlchemyBatchRepository(session)
     order_line = OrderLine(
         orderid=data["orderId"], qty=int(data["qty"]), sku=data["sku"]
     )
 
-    batches = session.scalars(select(Batch)).all()
+    breakpoint()
+
+    batches = repository.list()
 
     allocate(order_line, batches)
 

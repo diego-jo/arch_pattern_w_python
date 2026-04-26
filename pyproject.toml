@@ -16,6 +16,9 @@ dev = [
     "pytest>=9.0.2",
     "taskipy (>=1.14.1,<2.0.0)",
 ]
+test = [
+    "ipdb>=0.13.13",
+]
 
 [tool.taskipy.tasks]
 "test" = "pytest -vv"

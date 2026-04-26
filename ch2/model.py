@@ -31,7 +31,6 @@ class Batch:
             self._allocations.remove(line)
 
     def can_allocate(self, line: OrderLine) -> bool:
-        breakpoint()
         return self.sku == line.sku and self.available_quantity >= line.qty
 
     @property
@@ -61,6 +60,7 @@ class Batch:
 def allocate(line: OrderLine, batches: List[Batch]) -> str:
     try:
         batch = next(b for b in sorted(batches) if b.can_allocate(line))
+        breakpoint()
         batch.allocate(line)
 
         return batch.reference
